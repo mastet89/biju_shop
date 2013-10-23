@@ -1,0 +1,102 @@
+﻿<html>
+
+<head>
+	<script type="text/javascript" src="./js/mainPage.js" ></script>
+	<script type="text/javascript" src="./js/jquery-1.9.1.js" ></script>
+	<LINK href="css/mainpage.css" rel="stylesheet" type="text/css">
+ 	<script>
+
+/* 	$(".upDiv").hover(funtion() {
+    $(this).children('.tools').toggle();*/
+    var upDivContentActivated = false;
+
+
+    $(document).ready(function(){
+    	
+//    	$(checkStorageSupport());
+
+		$('#upDiv1').click(
+			function(){
+				window.scrollTo(0,0);
+				$(this).children('#upDivContent').hide();
+			});
+
+
+		$('#upDiv1').mouseover(function(e){
+
+				if(150 < $(document).scrollTop()){
+	/*				var curBot = $(document).scroll()+$(window).height();
+					$("#upDiv1").css({position: "absolute", bottom:curBot});	
+*/
+					$(this).children('#upDivContent').stop(false,true).fadeIn('fast');
+						
+					/*if (50 < $(document).scrollTop() + 50){
+                    	newY = $(document).scrollTop() + 350 - $(window).height();
+                    	$("#spanUpText").css({position: "absolute", top:newY});
+                	}*/		
+				}
+		});
+	
+		$('#upDiv1').mouseout(function(e){
+			$(this).children('#upDivContent').stop(false,true).fadeOut('fast');
+		});
+	});
+		
+  	</script>
+
+</head>
+
+<body ><!-- 
+<body background="./images/black_background_wood.jpg"> -->
+<div id="topContainer">
+<div class="upDiv" id="upDiv1" >
+	<div id="upDivContent" style="display: none;"><span id="spanUpText">&uarr; <span style="text-decoration: underline;">Вверх</span> </span></div>
+</div>
+
+<div id="container" class="contentDiv">
+
+<div id="header">
+<hr class="headHr">
+<div id="headerImageDiv">
+<h1 id="headText">Biju shop</h1> 
+</div>	
+<!-- <hr class="headHr"> -->
+</div>
+<div style="width:100%">
+<hr class="boundHr">
+<div id="menuTop">
+	<table id="menuTopTable">
+		<tr>
+			<td><h2 class="menuText">Товары</h2></td>
+			<td><h2 class="menuText">Заказы</h2></td>
+			<td><h2 class="menuText">Заказчики</h2></td>
+	<!-- 		<td><h2 class="menuText">JavaScript</h2></td> -->
+		</tr>
+	</table>
+
+</div>
+</div>
+
+<hr class="boundHr">
+
+<div id="content">
+Content goes here
+
+<div id="menuRight">
+Right menu
+</div>
+
+</div>
+
+<hr class="boundHr">
+<div id="footer">
+Designed in 2013 by Maksym Stetsenko 
+</div>
+</div>
+
+
+
+</div>
+
+</body>
+</html>
