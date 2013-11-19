@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:util="http://www.springframework.org/schema/util" xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.0.xsd"
+       default-lazy-init="true">
+
+    <!-- Activates scanning of @Autowired -->
+    <context:annotation-config/>
+
+    <!--<import resource="classpath:/fz223-statistic-api-context.xml"/>-->
+    <import resource="classpath:/fz223-common-web-context.xml"/>
+    <import resource="classpath:/smev-context.xml"/>
+
+    <import resource="classpath:/fz223-ppa-api-context.xml"/>
+    <import resource="classpath:/fz223-dishonest-suppliers-private-api-context.xml"/>
+    <import resource="classpath:/fz223-purchase-private-api-context.xml"/>
+    <import resource="classpath:/fz223-attachment-and-sign-api-context.xml"/>
+
+    <import resource="classpath:/fz223-job-statistics-context.xml"/>
+
+    <bean id="currentAppLinksConfig" abstract="true">
+        <property name="currentAppPrivateLinkrefName" value="ppa.private.host"/>
+        <property name="currentAppPublicLinkrefName" value="statistic.public.host"/>
+    </bean>
+
+    <!-- Hibernate prioperties -->
+    <util:properties id="ru.lanit.hibernateProperties"
+                     location="classpath:${hibernate.properties.name}"/>
+
+    <!-- Database acess -->
+    <bean id="ru.lanit.fz223.ppa.dataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
+        <property name="jndiName" value="java:comp/env/jdbc/fz223PpaDataSource"/>
+        <property name="lookupOnStartup" value="false"/>
+        <property name="cache" value="true"/>
+        <property name="proxyInterface" value="javax.sql.DataSource"/>
+    </bean>
+
+    <bean id="ru.lanit.fz223.ppa.doc.dataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
+        <property name="jndiName" value="java:comp/env/jdbc/fz223PpaDocDataSource"/>
+        <property name="lookupOnStartup" value="false"/>
+        <property name="cache" value="true"/>
+        <property name="proxyInterface" value="javax.sql.DataSource"/>
+    </bean>
+
+    <bean id="ru.lanit.fz223.dishonest.dataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
+        <property name="jndiName" value="java:comp/env/jdbc/fz223DishonestDataSource"/>
+        <property name="lookupOnStartup" value="false"/>
+        <property name="cache" value="true"/>
+        <property name="proxyInterface" value="javax.sql.DataSource"/>
+    </bean>
+
+    <bean id="ru.lanit.fz223.dishonest.doc.dataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
+        <property name="jndiName" value="java:comp/env/jdbc/fz223DishonestDocDataSource"/>
+        <property name="lookupOnStartup" value="false"/>
+        <property name="cache" value="true"/>
+        <property name="proxyInterface" value="javax.sql.DataSource"/>
+    </bean>
+
+    <bean id="ru.lanit.fz223.purchase.dataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
+        <property name="jndiName" value="java:comp/env/jdbc/fz223PurchaseDataSource"/>
+        <property name="lookupOnStartup" value="false"/>
+        <property name="cache" value="true"/>
+        <property name="proxyInterface" value="javax.sql.DataSource"/>
+    </bean>
+
+    <bean id="ru.lanit.fz223.purchase.doc.dataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
+        <property name="jndiName" value="java:comp/env/jdbc/fz223PurchaseDocDataSource"/>
+        <property name="lookupOnStartup" value="false"/>
+        <property name="cache" value="true"/>
+        <property name="proxyInterface" value="javax.sql.DataSource"/>
+    </bean>
+
+    <bean id="ru.lanit.fz223.clause.dataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
+        <property name="jndiName" value="java:comp/env/jdbc/fz223ClauseDataSource"/>
+        <property name="lookupOnStartup" value="false"/>
+        <property name="cache" value="true"/>
+        <property name="proxyInterface" value="javax.sql.DataSource"/>
+    </bean>
+
+    <bean id="ru.lanit.fz223.clause.doc.dataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
+        <property name="jndiName" value="java:comp/env/jdbc/fz223ClauseDocDataSource"/>
+        <property name="lookupOnStartup" value="false"/>
+        <property name="cache" value="true"/>
+        <property name="proxyInterface" value="javax.sql.DataSource"/>
+    </bean>
+
+    <!--Begin: Attachment alias-->
+    <alias name="dishonestAttachmentService" alias="application.attachment.service"/>
+    <alias name="dishonestAttachmentContentService" alias="application.attachment.content.service"/>
+    <alias name="dishonestPrintFormService" alias="application.print.form.service"/>
+    <alias name="dishonestPrintFormContentService" alias="application.print.form.content.service"/>
+    <alias name="dishonestCryptoSignService" alias="application.crypto.sign.service"/>
+    <!--End: Attachmet alias-->
+
+
+    <bean id="currentUserBean" class="ru.lanit.fz223.ppa.security.CurrentUserBeanImpl" scope="session">
+        <aop:scoped-proxy/>
+    </bean>
+
+    <!-- === Action classes descriptors === -->
+    <bean id="placeholderConfig" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="location" value="classpath:application.properties"/>
+    </bean>
+
+    <bean id="statisticsDao" class="ru.lanit.fz223.statistics.StatisticsDao">
+        <property name="sessionFactory" ref="ru.lanit.fz223.dishonest.sessionFactory"/>
+        <property name="statisticsTableName" value="#{T(ru.lanit.fz223.statistics.DayStatistics).PRIVATE_TABLE}"/>
+    </bean>
+
+    <bean id="jmxExporter" class="ru.lanit.monitoring.jmx.export.SpringMonitoringMXBeanExporterAdapter" lazy-init="false">
+        <property name="applicationName" value="dishonest-suppliers-private"/>
+    </bean>
+</beans>

@@ -1,0 +1,276 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns="http://java.sun.com/xml/ns/j2ee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd"
+         version="2.4">
+
+    <!-- Context Configuration locations for Spring XML files -->
+    <context-param>
+        <param-name>contextConfigLocation</param-name>
+        <param-value>/WEB-INF/applicationContext.xml</param-value>
+    </context-param>
+    
+	<context-param>
+		<param-name>oiosaml-j.home</param-name>
+		<param-value>${oiosaml-j.home-ppa}</param-value>
+	</context-param>
+
+    <context-param>
+        <param-name>SessionMonitor.authenticatedAttribute</param-name>
+        <param-value>dk.itst.oiosaml.userassertion</param-value>
+    </context-param>
+
+    <listener>
+        <listener-class>ru.lanit.monitoring.monitors.SessionMonitor</listener-class>
+    </listener>
+
+	<error-page>
+        <exception-type>java.lang.Exception</exception-type>
+        <location>/error.html</location>
+    </error-page>
+    <error-page>
+        <error-code>404</error-code>
+        <location>/error.html</location>
+    </error-page>
+    <error-page>
+        <error-code>403</error-code>
+        <location>/error.html</location>
+    </error-page>
+    <error-page>
+        <exception-type>ru.lanit.fz223.ppa.security.AuthenticationException</exception-type>
+        <location>/error.html</location>
+    </error-page>
+
+    <listener>
+        <listener-class>org.jboss.resteasy.plugins.server.servlet.ResteasyBootstrap</listener-class>
+    </listener>
+
+    <listener>
+        <listener-class>org.jboss.resteasy.plugins.spring.SpringContextLoaderListener</listener-class>
+    </listener>
+	<listener>
+		<listener-class>org.springframework.web.context.request.RequestContextListener</listener-class>
+	</listener>
+	<listener>
+		<listener-class>ru.lanit.fz223.web.filter.ESIASessionDestroyListener</listener-class>
+	</listener>
+    <!--<listener>-->
+    <!--<listener-class>ru.lanit.gmu.priv.web.listener.GMUContextListener</listener-class>-->
+    <!--</listener>-->
+
+    <filter>
+        <filter-name>requestContextFilter</filter-name>
+        <filter-class>org.springframework.web.filter.RequestContextFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>requestContextFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+    <filter>
+        <filter-name>Character Encoding Filter</filter-name>
+        <filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
+        <init-param>
+            <param-name>encoding</param-name>
+            <param-value>UTF-8</param-value>
+        </init-param>
+        <init-param>
+            <param-name>forceEncoding</param-name>
+            <param-value>true</param-value>
+        </init-param>
+    </filter>
+
+    <filter>
+        <filter-name>Request monitor</filter-name>
+        <filter-class>ru.lanit.monitoring.monitors.RequestMonitor</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>Request monitor</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
+	<servlet>
+		<servlet-name>SAMLDispatcherServlet</servlet-name>
+		<servlet-class>dk.itst.oiosaml.sp.service.DispatcherServlet</servlet-class>
+	</servlet>
+	
+	<servlet-mapping>
+		<servlet-name>SAMLDispatcherServlet</servlet-name>
+		<url-pattern>/saml/*</url-pattern>
+	</servlet-mapping>
+	
+<!--	<filter>
+		<filter-name>LoginFilter</filter-name>
+		<filter-class>ru.lanit.fz223.web.filter.ESIAFilter</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>LoginFilter</filter-name>
+		<url-pattern>*.html</url-pattern>
+	</filter-mapping>  
+
+    <filter>
+        <filter-name>UserFilter</filter-name>
+        <filter-class>ru.lanit.fz223.web.filter.UserFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>UserFilter</filter-name>
+        <url-pattern>*.html</url-pattern>
+    </filter-mapping>-->
+
+<!--    <filter>
+        <filter-name>AuthorizationFilter</filter-name>
+        <filter-class>ru.lanit.fz223.web.filter.AuthorizationFilter</filter-class>
+        <init-param>
+            <param-name>requestEncoding</param-name>
+            <param-value>windows-1251</param-value>
+        </init-param>
+    </filter>
+    <filter-mapping>
+        <filter-name>AuthorizationFilter</filter-name>
+        <url-pattern>/j_security_check</url-pattern>
+    </filter-mapping>-->
+
+    <servlet>
+        <servlet-name>rest</servlet-name>
+        <servlet-class>
+            org.jboss.resteasy.plugins.server.servlet.HttpServletDispatcher
+        </servlet-class>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>rest</servlet-name>
+        <url-pattern>/*</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>dispatcher</servlet-name>
+        <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>dispatcher</servlet-name>
+        <url-pattern>/admin/stats</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>dispatcher</servlet-name>
+        <url-pattern>/support</url-pattern>
+    </servlet-mapping>
+
+
+    <filter-mapping>
+        <filter-name>Character Encoding Filter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
+    <welcome-file-list>
+        <welcome-file>index.jsp</welcome-file>
+    </welcome-file-list>
+
+    <resource-ref>
+        <description>Integration Rest Datasource</description>
+        <res-ref-name>jdbc/fz223IntegrationRestDataSource</res-ref-name>
+        <res-type>javax.sql.DataSource</res-type>
+        <res-auth>Container</res-auth>
+    </resource-ref>
+
+	<resource-ref>
+        <description>Mail Session</description>
+        <res-ref-name>mail/Session</res-ref-name>
+        <res-type>javax.mail.Session</res-type>
+        <res-auth>Container</res-auth>
+    </resource-ref>
+
+    <resource-env-ref id="ResourceEnvRef_SecurityConfiguration">
+        <description>Конфигурация безопасности</description>
+        <resource-env-ref-name>resources/configuration/Security</resource-env-ref-name>
+        <resource-env-ref-type>ru.lanit.pgz.config.api.ConfigObject</resource-env-ref-type>
+    </resource-env-ref>
+
+
+    <resource-env-ref id="ResourceEnvRef_CommonConfiguration">
+        <description>Общая Конфигурация</description>
+        <resource-env-ref-name>resources/configuration/Common</resource-env-ref-name>
+        <resource-env-ref-type>ru.lanit.pgz.config.api.ConfigObject</resource-env-ref-type>
+    </resource-env-ref>
+
+    <resource-env-ref id="ResourceEnvRef_SMEVIntegrationConfiguration">
+        <description>Конфигурация сервиса СМЭВ</description>
+        <resource-env-ref-name>resources/configuration/SMEVIntegrationConfiguration</resource-env-ref-name>
+        <resource-env-ref-type>ru.lanit.pgz.config.api.ConfigObject</resource-env-ref-type>
+    </resource-env-ref>
+
+    <resource-env-ref id="ResourceEnvRef_IntegrationConfiguration">
+        <description>Конфигурация интеграции</description>
+        <resource-env-ref-name>resources/configuration/IntegrationConfiguration</resource-env-ref-name>
+        <resource-env-ref-type>ru.lanit.pgz.config.api.ConfigObject</resource-env-ref-type>
+    </resource-env-ref>
+
+    <resource-env-ref id="ResourceEnvRef_Nsi_FtpManager">
+        <description>FTP выгрузки НСИ</description>
+        <resource-env-ref-name>resources/configuration/nsi/FtpManager</resource-env-ref-name>
+        <resource-env-ref-type>ru.lanit.pgz.config.api.ConfigObject</resource-env-ref-type>
+    </resource-env-ref>
+
+    <resource-env-ref id="ResourceEnvRef_PF_FtpManager">
+        <description>FTP выгрузки опубликованных данных</description>
+        <resource-env-ref-name>resources/configuration/published/FtpManager</resource-env-ref-name>
+        <resource-env-ref-type>ru.lanit.pgz.config.api.ConfigObject</resource-env-ref-type>
+    </resource-env-ref>
+
+<!--     <login-config> -->
+<!--         <auth-method>FORM</auth-method> -->
+<!--         <form-login-config> -->
+<!--             <form-login-page>/login.html</form-login-page> -->
+<!--             <form-error-page>/login.html?error=true</form-error-page> -->
+<!--         </form-login-config> -->
+<!--     </login-config> -->
+
+<!--     <security-role> -->
+<!--         <role-name>PGZUsers</role-name> -->
+<!--     </security-role> -->
+
+<!--     <security-constraint> -->
+<!--         <display-name>secure</display-name> -->
+<!--         <web-resource-collection> -->
+<!--             <web-resource-name>All</web-resource-name> -->
+<!--             <url-pattern>/*</url-pattern> -->
+<!--             <http-method>GET</http-method> -->
+<!--             <http-method>POST</http-method> -->
+<!--             <http-method>DELETE</http-method> -->
+<!--             <http-method>PUT</http-method> -->
+<!--         </web-resource-collection> -->
+<!--         <auth-constraint> -->
+<!--             <role-name>PGZUsers</role-name> -->
+<!--         </auth-constraint> -->
+<!--     </security-constraint> -->
+
+<!--     <security-constraint> -->
+<!--         <display-name>public</display-name> -->
+<!--         <web-resource-collection> -->
+<!--             <web-resource-name>public</web-resource-name> -->
+<!--             <url-pattern>/images/*</url-pattern> -->
+<!--             <url-pattern>/scripts/*</url-pattern> -->
+<!--             <url-pattern>/js/*</url-pattern> -->
+<!--             <url-pattern>/css/*</url-pattern> -->
+<!--             <url-pattern>/registration/*</url-pattern> -->
+<!--             <url-pattern>/user/registrationRequest/*</url-pattern> -->
+<!-- 			<url-pattern>/user/getLogins.html</url-pattern> -->
+<!--             <url-pattern>/src/main/webapp/js/custom.js</url-pattern> -->
+<!--             <url-pattern>/logout.jsp</url-pattern> -->
+<!--         </web-resource-collection> -->
+<!--     </security-constraint> -->
+
+    <!--<security-constraint>-->
+        <!--<display-name>registration</display-name>-->
+        <!--<web-resource-collection>-->
+            <!--<web-resource-name>registration</web-resource-name>-->
+            <!--<url-pattern>/registration/*</url-pattern>-->
+        <!--</web-resource-collection>-->
+        <!--<auth-constraint>-->
+            <!--<role-name>GMUUsers</role-name>-->
+        <!--</auth-constraint>-->
+    <!--</security-constraint>-->
+
+
+</web-app>
